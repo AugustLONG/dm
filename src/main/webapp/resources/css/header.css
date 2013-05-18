@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+#header_title {
+	font-size:28px;
+	float:left;
+	position:relative;
+}
+
+#header_middle {
+	position:relative;
+	float:left;
+	margin: 20px 0 0 20px;
+}
+
+#header_search_text {
+	width:400px;
+	height:30px;
+}

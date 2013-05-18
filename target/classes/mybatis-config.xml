@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="{jdbc.driverClassName}" />
+                <property name="url" value="{jdbc.url}" />
+                <property name="username" value="{jdbc.username}" />
+                <property name="password" value="{jdbc.password}" />
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="cn/edu/ustb/dm/map/BookAuthorInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/BookOnlineInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/BookPublishingInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/AuthorInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/BookAuthorRelationMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/BookInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/BookRelationMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/BookTagRelationMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/PublisherInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/TagInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/NationalityInfoMapper.xml"/>
+        <mapper resource="cn/edu/ustb/dm/map/BindingTypeMapper.xml"/>
+    </mappers>
+</configuration>
