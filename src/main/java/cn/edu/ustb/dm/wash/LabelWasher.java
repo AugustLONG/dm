@@ -1,10 +1,15 @@
 package cn.edu.ustb.dm.wash;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.swing.text.DateFormatter;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -33,11 +38,14 @@ import cn.edu.ustb.dm.model.BindingTypeExample;
 import cn.edu.ustb.dm.model.BookAuthorInfo;
 import cn.edu.ustb.dm.model.BookAuthorInfoExample;
 import cn.edu.ustb.dm.model.BookAuthorRelation;
+import cn.edu.ustb.dm.model.BookInfo;
+import cn.edu.ustb.dm.model.BookInfoWithBLOBs;
 import cn.edu.ustb.dm.model.BookOnlineInfo;
 import cn.edu.ustb.dm.model.BookOnlineInfoExample;
 import cn.edu.ustb.dm.model.BookOnlineInfoWithBLOBs;
 import cn.edu.ustb.dm.model.BookPublishingInfo;
 import cn.edu.ustb.dm.model.BookPublishingInfoExample;
+import cn.edu.ustb.dm.model.BookPublishingInfoWithBLOBs;
 import cn.edu.ustb.dm.model.BookRelation;
 import cn.edu.ustb.dm.model.BookTagRelation;
 import cn.edu.ustb.dm.model.NationalityInfo;
@@ -51,50 +59,29 @@ import cn.edu.ustb.dm.model.TagInfoExample;
 public class LabelWasher {
 	private static final Logger logger = LoggerFactory.getLogger(LabelWasher.class);
 
-	private static final int interval = 1;
+	private static final int interval = 50;
 	private static final Pattern tagPattern = Pattern.compile("([^\\s\\(]+)\\((\\d+)\\)");
 	private static final Pattern authorPattern = Pattern.compile(
 			"^(;([\u4e00-\u9fa5]+);)?([\\w\u4e00-\u9fa5\\.•]+)");
 	
 	@Resource
 	public SqlSessionFactory sqlSessionFactory;
-	@Resource
-	public BookTagRelationMapper bookTagRelationMapper;
-	@Resource
-	public BookAuthorRelationMapper bookAuthorRelationMapper;
-	@Resource
-	public BookOnlineInfoMapper bookOnlineInfoMapper;
-	@Resource
-	public TagInfoMapper tagInfoMapper;
-	@Resource
-	public AuthorInfoMapper authorInfoMapper;
-	@Resource
-	public BookAuthorInfoMapper bookAuthorInfoMapper;
-	@Resource
-	public BookInfoMapper bookInfoMapper;
-	@Resource
-	public BookPublishingInfoMapper bookPublishingInfoMapper;
-	@Resource
-	public BookRelationMapper bookRelationMapper;
-	@Resource
-	public PublisherInfoMapper publisherInfoMapper;
-	@Resource
-	public NationalityInfoMapper nationalityInfoMapper;
 
 	private SqlSession sqlSession;
 	
 	@RequestMapping(value = "/washer", method = RequestMethod.GET)
 	public String washerDriver() {
-		int fromId = 1055000;//Original start.
-		//int endId = 4929300;//Original end;
-		int endId = 1055100;
-		//int fromId = 1204908;//Pause 2013/5/14 23:38
+		//int fromId = 1055000;//Original start.
+		int endId = 4929300;//Original end;
+		//int endId = 1250000;
+		int fromId = 1109128;
 		try {
 			while(fromId < endId) {
 				//fromId = washTagData(fromId, interval);
 				//fromId = washAuthorData(fromId, interval);
 				//fromId = washPublisherData(fromId, interval);
-				fromId = washTogetherBoughtData(fromId, interval);
+				//fromId = washTogetherBoughtData(fromId, interval);
+				fromId = washBookInfoData(fromId, interval);
 				
 			}
 		} finally {
@@ -104,7 +91,7 @@ public class LabelWasher {
 	}
 	
 	private int washTagData(int fromId, int interval) {
-		logger.info("Id = " + fromId);
+		logger.info("washTag Id = " + fromId);
 		sqlSession = sqlSessionFactory.openSession();
 		BookOnlineInfoMapper bookOnlineInfoMapper = sqlSession.getMapper(BookOnlineInfoMapper.class);
 		TagInfoMapper tagInfoMapper = sqlSession.getMapper(TagInfoMapper.class);
@@ -155,7 +142,7 @@ public class LabelWasher {
 	}
 	
 	private int washAuthorData(int fromId, int interval) {
-		logger.info("bookId = " + fromId);
+		logger.info("washAuthor Id = " + fromId);
 		sqlSession = sqlSessionFactory.openSession();
 		BookAuthorInfoMapper bookAuthorInfoMapper = sqlSession.getMapper(BookAuthorInfoMapper.class);
 		NationalityInfoMapper nationalityInfoMapper = sqlSession.getMapper(NationalityInfoMapper.class);
@@ -167,7 +154,7 @@ public class LabelWasher {
 		bookAuthorInfoCriteria.andBook_idBetween(fromId, fromId+interval-1);
 		List<BookAuthorInfo> bookAuthorInfoList =
 				bookAuthorInfoMapper.selectByExampleWithBLOBs(bookAuthorInfoExample);
-		logger.info("bookAuthorInfoList = " + bookAuthorInfoList.size());
+		//logger.info("bookAuthorInfoList = " + bookAuthorInfoList.size());
 		for(BookAuthorInfo bookAuthorInfo : bookAuthorInfoList) {
 			String name = bookAuthorInfo.getAuthor_name();
 			name = name.replaceAll("编著", "/");
@@ -189,13 +176,13 @@ public class LabelWasher {
 			for(String eachName : name.split("/")) {
 				Matcher matcher = authorPattern.matcher(eachName);
 				int nameIndex = 0;
-				logger.info("name = " + eachName);
+				//logger.info("name = " + eachName);
 				if(matcher.find()) {
 					String nationalityName = matcher.group(2);
 					String authorName = matcher.group(3);
-					logger.info("matcher.group(0) = " + matcher.group());
-					logger.info("matcher.group(2) = " + matcher.group(2));
-					logger.info("matcher.group(3) = " + matcher.group(3));
+					//logger.info("matcher.group(0) = " + matcher.group());
+					//logger.info("matcher.group(2) = " + matcher.group(2));
+					//logger.info("matcher.group(3) = " + matcher.group(3));
 					AuthorInfoExample authorInfoExample = new AuthorInfoExample();
 					AuthorInfoExample.Criteria authorInfoCriteria = authorInfoExample.createCriteria();
 					authorInfoCriteria.andAUTHOR_NAMEEqualTo(authorName);
@@ -219,7 +206,7 @@ public class LabelWasher {
 							nationalityId = nationalityInfo.getNATIONALITY_ID();
 						}
 					}
-					logger.info("nationalityId = " + nationalityId);
+					//logger.info("nationalityId = " + nationalityId);
 					}
 					int authorId = 0;
 					if(authorInfoList.size() > 0) {
@@ -253,7 +240,7 @@ public class LabelWasher {
 	}
 	
 	private int washPublisherData(int fromId, int interval) {
-		logger.info("Id = " + fromId);
+		logger.info("washPublisher Id = " + fromId);
 		sqlSession = sqlSessionFactory.openSession();
 		BookPublishingInfoMapper bookPublishingInfoMapper =
 				sqlSession.getMapper(BookPublishingInfoMapper.class);
@@ -298,7 +285,7 @@ public class LabelWasher {
 	}
 	
 	private int washTogetherBoughtData(int fromId, int interval) {
-		logger.info("Id = " + fromId);
+		logger.info("washTogetherBought Id = " + fromId);
 		sqlSession = sqlSessionFactory.openSession();
 		BookOnlineInfoMapper bookOnlineInfoMapper =
 				sqlSession.getMapper(BookOnlineInfoMapper.class);
@@ -320,7 +307,7 @@ public class LabelWasher {
 					bookRelation.setRELATION_BOOK_NAME(relation);
 					BookPublishingInfoExample bookPublishingInfoExample = new BookPublishingInfoExample();
 					BookPublishingInfoExample.Criteria bookPublishingInfoCriteria = bookPublishingInfoExample.createCriteria();
-					bookPublishingInfoCriteria.andTitleEqualTo(relation);
+					//bookPublishingInfoCriteria.andti;
 					List<BookPublishingInfo> bookPublishingInfoList = bookPublishingInfoMapper.selectByExample(bookPublishingInfoExample);
 					if(bookPublishingInfoList.size() > 0)
 						bookRelation.setRELATION_BOOK_ID(bookPublishingInfoList.get(0).getBook_id());
@@ -332,4 +319,120 @@ public class LabelWasher {
 		sqlSession.close();
 		return fromId+interval;
 	}
+	
+	private int washBookInfoData(int fromId, int interval) {
+		logger.info("washBookInfo Id = " + fromId);
+		sqlSession = sqlSessionFactory.openSession();
+		BookOnlineInfoMapper bookOnlineInfoMapper =
+				sqlSession.getMapper(BookOnlineInfoMapper.class);
+		BookPublishingInfoMapper bookPublishingInfoMapper =
+				sqlSession.getMapper(BookPublishingInfoMapper.class);
+		BookInfoMapper bookInfoMapper = sqlSession.getMapper(BookInfoMapper.class);
+		BindingTypeMapper bindingTypeMapper = sqlSession.getMapper(BindingTypeMapper.class);
+		PublisherInfoMapper publisherInfoMapper = sqlSession.getMapper(PublisherInfoMapper.class);
+		BookPublishingInfoExample bookPublishingInfoExample = new BookPublishingInfoExample();
+		bookPublishingInfoExample.or().andBook_idBetween(fromId, fromId + interval - 1);
+		List<BookPublishingInfoWithBLOBs> bookPublishingInfoList =
+				bookPublishingInfoMapper.selectByExampleWithBLOBs(bookPublishingInfoExample);
+		for(BookPublishingInfoWithBLOBs bookPublishingInfo : bookPublishingInfoList) {
+			BookOnlineInfoExample bookOnlineInfoExample = new BookOnlineInfoExample();
+			bookOnlineInfoExample.or().andBook_idEqualTo(bookPublishingInfo.getBook_id());
+			List<BookOnlineInfo> bookOnlineInfoList =
+					bookOnlineInfoMapper.selectByExample(bookOnlineInfoExample);
+			BookInfoWithBLOBs bookInfo = new BookInfoWithBLOBs();
+			if(bookOnlineInfoList.size()>0)
+			{
+				BookOnlineInfo bookOnlineInfo = bookOnlineInfoList.get(0);
+				if(bookOnlineInfo.getNumber_readed() != null)
+					bookInfo.setNUMBER_READED(bookOnlineInfo.getNumber_readed());
+				if(bookOnlineInfo.getNumber_reading() != null)
+					bookInfo.setNUMBER_READING(bookOnlineInfo.getNumber_reading());
+				if(bookOnlineInfo.getNumber_review() != null)
+					bookInfo.setNUMBER_REVIEW(bookOnlineInfo.getNumber_review());
+				if(bookOnlineInfo.getNumber_star1() != null)
+					bookInfo.setNUMBER_STAR1(bookOnlineInfo.getNumber_star1());
+				if(bookOnlineInfo.getNumber_star2() != null)
+					bookInfo.setNUMBER_STAR2(bookOnlineInfo.getNumber_star2());
+				if(bookOnlineInfo.getNumber_star3() != null)
+					bookInfo.setNUMBER_STAR3(bookOnlineInfo.getNumber_star3());
+				if(bookOnlineInfo.getNumber_star4() != null)
+					bookInfo.setNUMBER_STAR4(bookOnlineInfo.getNumber_star4());
+				if(bookOnlineInfo.getNumber_star5() != null)
+					bookInfo.setNUMBER_STAR5(bookOnlineInfo.getNumber_star5());
+				if(bookOnlineInfo.getNumber_toread() != null)
+					bookInfo.setNUMBER_TOREAD(bookOnlineInfo.getNumber_toread());
+			}
+			bookInfo.setBOOK_ID(bookPublishingInfo.getBook_id());
+			if(bookPublishingInfo.getIsbn() != null)
+				bookInfo.setISBN(bookPublishingInfo.getIsbn());
+			if(bookPublishingInfo.getTitle() != null)
+				bookInfo.setTITLE(bookPublishingInfo.getTitle());
+			if(bookPublishingInfo.getDescription() != null)
+				bookInfo.setDESCRIPTION(bookPublishingInfo.getDescription());
+			if(bookPublishingInfo.getDirectory() != null)
+				bookInfo.setDIRECTORY(bookPublishingInfo.getDirectory());
+			if(bookPublishingInfo.getBinding() != null) {
+				BindingTypeExample bindingTypeExample = new BindingTypeExample();
+				bindingTypeExample.or().andBINDING_NAMEEqualTo(bookPublishingInfo.getBinding());
+				List<BindingType> bindingTypeList = bindingTypeMapper.selectByExample(bindingTypeExample);
+				if(bindingTypeList.size() > 0)
+					bookInfo.setBINDING_ID(bindingTypeList.get(0).getBINDING_ID());
+			}
+			if(bookPublishingInfo.getList_price() != null) {
+				try {
+					Double price = Double.parseDouble(bookPublishingInfo.getList_price());
+					int priceTimes = (int) (price * 100);
+					bookInfo.setLIST_PRICE(priceTimes);
+				} catch(NumberFormatException e){
+				}
+			}
+			if(bookPublishingInfo.getPage() != null) {
+				try {
+					int page = Integer.parseInt(bookPublishingInfo.getPage());
+					bookInfo.setPAGE(page);
+				} catch(NumberFormatException e){
+				}
+			}
+			if(bookPublishingInfo.getPublisher() != null) {
+				PublisherInfoExample publisherInfoExample = new PublisherInfoExample();
+				publisherInfoExample.or().andPUBLISHER_NAMEEqualTo(bookPublishingInfo.getPublisher());
+				List<PublisherInfo> publisherInfoList = publisherInfoMapper.selectByExample(publisherInfoExample);
+				if(publisherInfoList.size() > 0)
+					bookInfo.setPUBLISHER_ID(publisherInfoList.get(0).getPUBLISHER_ID());
+			}
+			if(bookPublishingInfo.getPublication_date() != null) {
+				try {
+					String dateStr = bookPublishingInfo.getPublication_date().trim();
+					String format = null;
+					if(dateStr.matches("^\\d+-\\d+-\\d+$"))
+						format = "yyyy-MM-dd";
+					else if(dateStr.matches("^\\d+-\\d+$"))
+						format = "yyyy-MM";
+					else if(dateStr.matches("^\\d{4}$"))
+						format = "yyyy";
+					else if(dateStr.matches("^\\d+年\\d+月\\d+日$"))
+						format = "yyyy-MM-dd";
+					else if(dateStr.matches("^\\d+年\\d+月$"))
+						format = "yyyy-MM";
+					else if(dateStr.matches("^\\d+年$"))
+						format = "yyyy";
+					if(format != null)
+					{
+						DateFormat df = new SimpleDateFormat(format);
+						Date date = df.parse(dateStr);
+						bookInfo.setPUBLICATION_DATE(date);
+					}
+				} catch(ParseException e){
+				}
+			}
+			if(bookPublishingInfo.getTitle_page_images() != null)
+				bookInfo.setTITLE_PAGE_IMAGES(bookPublishingInfo.getTitle_page_images());
+			bookInfoMapper.insert(bookInfo);
+		}
+		sqlSession.commit();
+		sqlSession.close();
+		return fromId+interval;
+	}
+	
+	
 }
