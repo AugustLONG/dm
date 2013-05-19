@@ -7,7 +7,7 @@
 		<div class="book_recommend_title">
 			相关图书推荐
 		</div>
-		<c:forEach items="${bookRecommendList}" var="item" varStatus="status" end="5">
+		<c:forEach items="${bookRecommendList}" var="item" varStatus="status">
 		<div class="book_recommend_item">
 			<img class="book_recommend_item_image" alt="" src="${item.imageSrc }">
 			<div class="book_recommend_item_title">${item.title }</div>
@@ -25,7 +25,7 @@
 		<c:forEach items="${bookRecommendClassifyList}" var="item" varStatus="status">
 		<div class="book_recommend_classify_item">
 			<img class="book_recommend_classify_item_image" alt="" src="${item.imageSrc}">
-			<div class="book_recommend_classify_item_name">${item.name}</div>
+			<div class="book_recommend_classify_item_name">${item.tagName}</div>
 			<div class="book_recommend_classify_item_title1">${item.title1 }</div>
 			<div class="book_recommend_classify_item_title2">${item.title2 }</div>
 		</div>
@@ -33,9 +33,12 @@
 	</div>
 </div>
 <div id="content_right">
-	<div class="book_classify">
-		<div class="book_classify_title">
+	<div class="tag_list">
+		<div class="tag_list_title">
 			图书分类
+		</div>
+		<div class="tag_list_row">
+			<a href="#"></a>
 		</div>
 		<c:forEach items="${bookClassifyList}" var="item" varStatus="status">
 		<div class="book_classify_item">

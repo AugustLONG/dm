@@ -1,6 +1,6 @@
 package cn.edu.ustb.model;
 
-public class BookListItem3 {
+public class BookListItemModel {
 	private String imageSrc;
 	private String title;
 	private String author;
@@ -29,5 +29,8 @@ public class BookListItem3 {
 	}
 	public void setStar(int star) {
 		this.star = star;
+	}
+	public void setStar(int star1, int star2, int star3, int star4, int star5) {
+		this.star = (star1 + 2*star2 + 3*star3 + 4*star4 + 5*star5) / (star1+star2+star3+star4+star5);
 	}
 }
