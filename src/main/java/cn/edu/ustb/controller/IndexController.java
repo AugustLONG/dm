@@ -62,33 +62,27 @@ public class IndexController {
 		}
 		return properties;
 	}
-	private SqlSession getSession() {
-		if(session == null) {
-			session = sqlSessionFactory.openSession();
-		}
-		return session;
-	}
 	private BookInfoMapper getBookInfoMapper() {
 		if(bookInfoMapper == null) {
-			bookInfoMapper = getSession().getMapper(BookInfoMapper.class);
+			bookInfoMapper = session.getMapper(BookInfoMapper.class);
 		}
 		return bookInfoMapper;
 	}
 	private BookPublishingInfoMapper getBookPublishingMapper() {
 		if(bookPublishingMapper == null) {
-			bookPublishingMapper = getSession().getMapper(BookPublishingInfoMapper.class);
+			bookPublishingMapper = session.getMapper(BookPublishingInfoMapper.class);
 		}
 		return bookPublishingMapper;
 	}
 	private TagInfoMapper getTagInfoMapper() {
 		if(tagInfoMapper == null) {
-			tagInfoMapper = getSession().getMapper(TagInfoMapper.class);
+			tagInfoMapper = session.getMapper(TagInfoMapper.class);
 		}
 		return tagInfoMapper;
 	}
 	private BookTagRelationMapper getBookTagRelationMapper() {
 		if(bookTagRelationMapper == null) {
-			bookTagRelationMapper = getSession().getMapper(BookTagRelationMapper.class);
+			bookTagRelationMapper = session.getMapper(BookTagRelationMapper.class);
 		}
 		return bookTagRelationMapper;
 	}
@@ -96,22 +90,31 @@ public class IndexController {
 		if(bookRecommendList == null) {
 			bookRecommendList = new ArrayList<BookListItemModel>(6);
 			BookInfoExample infoExample = new BookInfoExample();
-			infoExample.setOrderByClause("NUMBER_TOREAD DESC");
+			infoExample.setOrderByClause("NUMBER_TOREAD DESC limit 30");
+			infoExample.or().andTITLE_PAGE_IMAGESIsNotNull();
 			List<BookInfo> bookInfoList = getBookInfoMapper().selectByExample(infoExample);
-			for(int i=0; i<6&&i<bookInfoList.size(); i++) {
-				BookInfo bookInfo = bookInfoList.get(i);
-				BookListItemModel item = new BookListItemModel();
-				item.setImageSrc(getProperties().getProperty("book_mpic") + bookInfo.getTITLE_PAGE_IMAGES());
-				item.setTitle(bookInfo.getTITLE());
-				BookPublishingInfoExample publishingExample = new BookPublishingInfoExample();
-				publishingExample.or().andBook_idEqualTo(bookInfo.getBOOK_ID());
-				List<BookPublishingInfoWithBLOBs> bookPublishingList =
-						getBookPublishingMapper().selectByExampleWithBLOBs(publishingExample);
-				item.setAuthor(bookPublishingList.get(0).getAuther_name());
-				item.setStar(bookInfo.getNUMBER_STAR1(), bookInfo.getNUMBER_STAR2(),
-						bookInfo.getNUMBER_STAR3(), bookInfo.getNUMBER_STAR4(),
-						bookInfo.getNUMBER_STAR5());
-				bookRecommendList.set(i, item);
+			int i=0;
+			for(BookInfo bookInfo : bookInfoList) {
+				logger.info("bookInfo i = " + i);
+				if(bookInfo.getTITLE_PAGE_IMAGES().trim().length() != 0) {
+					if(i<6)
+						i++;
+					else
+						break;
+					logger.info("bookInfo with image i = " + i);
+					BookListItemModel item = new BookListItemModel();
+					item.setImageSrc(getProperties().getProperty("book_mpic") + bookInfo.getTITLE_PAGE_IMAGES());
+					item.setTitle(bookInfo.getTITLE());
+					BookPublishingInfoExample publishingExample = new BookPublishingInfoExample();
+					publishingExample.or().andBook_idEqualTo(bookInfo.getBOOK_ID());
+					List<BookPublishingInfoWithBLOBs> bookPublishingList =
+							getBookPublishingMapper().selectByExampleWithBLOBs(publishingExample);
+					item.setAuthor(bookPublishingList.get(0).getAuther_name());
+					item.setStar(bookInfo.getNUMBER_STAR1(), bookInfo.getNUMBER_STAR2(),
+							bookInfo.getNUMBER_STAR3(), bookInfo.getNUMBER_STAR4(),
+							bookInfo.getNUMBER_STAR5());
+					bookRecommendList.add(item);
+				}
 			}
 		}
 		return bookRecommendList;
@@ -120,45 +123,63 @@ public class IndexController {
 		if(bookRecommendClassifyList == null) {
 			bookRecommendClassifyList = new ArrayList<BookClassifyItemModel>(12);
 			TagInfoExample tagExample = new TagInfoExample();
-			tagExample.setOrderByClause("COUNT DESC");
+			tagExample.setOrderByClause("COUNT DESC limit 12");
 			List<TagInfo> tagInfoList = this.getTagInfoMapper().selectByExample(tagExample);
 			for(int i=0; i<12&&i<tagInfoList.size(); i++) {
 				TagInfo tagInfo = tagInfoList.get(i);
 				BookClassifyItemModel item = new BookClassifyItemModel();
-				item.setImageSrc(getProperties().getProperty("book_mpic"));
 				item.setTagName(tagInfo.getNAME());
 				BookTagRelationExample relationExample = new BookTagRelationExample();
 				relationExample.or().andTAG_IDEqualTo(tagInfo.getTAG_ID());
 				List<BookTagRelation> relationList =
 						getBookTagRelationMapper().selectByExample(relationExample);
 				List<String> titleList = new ArrayList<String>(2);
-				for(int j=0; j<2&&j<relationList.size(); j++) {
+				int j = 0;
+				for(BookTagRelation relation : relationList) {
 					BookInfoExample bookExample = new BookInfoExample();
-					bookExample.or().andBOOK_IDEqualTo(relationList.get(0).getBOOK_ID());
+					bookExample.or().andBOOK_IDEqualTo(relation.getBOOK_ID());
 					List<BookInfo> bookList = getBookInfoMapper().selectByExample(bookExample);
 					if(bookList.size() > 0) {
-						titleList.set(j, bookList.get(0).getTITLE());
+						BookInfo bookInfo = bookList.get(0);
+						if(bookInfo.getTITLE_PAGE_IMAGES() != null &&
+								bookInfo.getTITLE_PAGE_IMAGES().trim().length() != 0) {
+							if(j<2)
+								j++;
+							else
+								break;
+							if(j == 1)
+								item.setImageSrc(getProperties().getProperty("book_mpic")
+										+ bookInfo.getTITLE_PAGE_IMAGES());
+							titleList.add(bookInfo.getTITLE());
+						}
 					}
 				}
 				item.setTitleList(titleList);
-				bookRecommendClassifyList.set(i, item);
+				bookRecommendClassifyList.add(item);
 			}
 		}
 		return bookRecommendClassifyList;
 	}
 	private List<BookListItemModel> getBookRankList() {
-		if(bookRankList != null) {
+		if(bookRankList == null) {
 			bookRankList = new ArrayList<BookListItemModel>(6);
 			BookInfoExample example = new BookInfoExample();
-			example.setOrderByClause("NUMBER_REVIEW DESC");
+			example.setOrderByClause("NUMBER_REVIEW DESC limit 30");
+			example.or().andTITLE_PAGE_IMAGESIsNotNull();
 			List<BookInfo> bookList = getBookInfoMapper().selectByExample(example);
-			for(int i=0; i<6&&i<bookList.size(); i++) {
-				BookInfo bookInfo = bookList.get(i);
-				BookListItemModel item = new BookListItemModel();
-				item.setImageSrc(getProperties().getProperty("book_mpic")
-						+ bookInfo.getTITLE_PAGE_IMAGES());
-				item.setTitle(bookInfo.getTITLE());
-				bookRankList.set(i, item);
+			int i = 0;
+			for(BookInfo bookInfo : bookList) {
+				if(bookInfo.getTITLE_PAGE_IMAGES().trim().length() != 0) {
+					if(i<6)
+						i++;
+					else
+						break;
+					BookListItemModel item = new BookListItemModel();
+					item.setImageSrc(getProperties().getProperty("book_mpic")
+							+ bookInfo.getTITLE_PAGE_IMAGES());
+					item.setTitle(bookInfo.getTITLE());
+					bookRankList.add(item);
+				}
 			}
 		}
 		return bookRankList;
@@ -166,13 +187,14 @@ public class IndexController {
 	
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String index(Locale locale, Model model){
+		session = sqlSessionFactory.openSession();
 		try {
 			model.addAttribute("bookRecommendList", getBookRecommendList());
 			model.addAttribute("bookRecommendClassifyList", getBookRecommendClassifyList());
 			model.addAttribute("bookRankList", getBookRankList());
-			getSession().commit();
+			session.commit();
 		} finally {
-			getSession().close();
+			session.close();
 		}
 		return "index";
 	}

@@ -12,7 +12,6 @@
 			<img class="book_recommend_item_image" alt="" src="${item.imageSrc }">
 			<div class="book_recommend_item_title">${item.title }</div>
 			<div class="book_recommend_item_author">${item.author }</div>
-			<div class="book_recommend_item_binding">${item.binding }</div>
 			<div class="book_recommend_item_star_${item.star }"></div>
 		</div>
 		</c:forEach>
@@ -26,8 +25,9 @@
 		<div class="book_recommend_classify_item">
 			<img class="book_recommend_classify_item_image" alt="" src="${item.imageSrc}">
 			<div class="book_recommend_classify_item_name">${item.tagName}</div>
-			<div class="book_recommend_classify_item_title1">${item.title1 }</div>
-			<div class="book_recommend_classify_item_title2">${item.title2 }</div>
+			<c:forEach items="${item.titleList }" var="title" varStatus="s">
+			<div class="book_recommend_classify_item_title1">${title }</div>
+			</c:forEach>
 		</div>
 		</c:forEach>
 	</div>
@@ -40,14 +40,6 @@
 		<div class="tag_list_row">
 			<a href="#"></a>
 		</div>
-		<c:forEach items="${bookClassifyList}" var="item" varStatus="status">
-		<div class="book_classify_item">
-			<img class="book_classify_item_image" alt="" src="${item.imageSrc }">
-			<div class="book_classify_item_name">${item.name}</div>
-			<div class="book_classify_item_title1">${item.title1 }</div>
-			<div class="book_classify_item_title2">${item.title2 }</div>
-		</div>
-		</c:forEach>
 	</div>
 	<div class="book_rank">
 		<div class="book_rank_title">
@@ -56,7 +48,7 @@
 		<c:forEach items="${bookRankList}" var="item" varStatus="status">
 		<div class="book_rank_item">
 			<img class="book_rank_item_image" alt="" src="${item.imageSrc }">
-			<div class="book_rank_item_name">${item.name}</div>
+			<div class="book_rank_item_name">${item.title}</div>
 		</div>
 		</c:forEach>
 	</div>
