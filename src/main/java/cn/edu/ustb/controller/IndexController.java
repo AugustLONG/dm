@@ -34,7 +34,6 @@ import cn.edu.ustb.model.BookListItemModel;
 import cn.edu.ustb.model.BookClassifyItemModel;
 
 @Controller
-@RequestMapping(value = "/", method = RequestMethod.GET)
 public class IndexController {
 	@Resource
 	private SqlSessionFactory sqlSessionFactory;
