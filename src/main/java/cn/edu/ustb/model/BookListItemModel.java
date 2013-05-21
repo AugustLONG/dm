@@ -50,13 +50,25 @@ public class BookListItemModel {
 		DateFormat df = new SimpleDateFormat("yyyy-MM");
 		this.date = df.format(date);
 	}
-	public void setPrice(int price) {
+	public void setPrice(Integer price) {
+		if(price == null)
+			price = 0;
 		this.price = String.format("%.2f", price/100.0);
 	}
 	public void setStar(int star) {
 		this.star = star;
 	}
-	public void setStar(int star1, int star2, int star3, int star4, int star5) {
+	public void setStar(Integer star1, Integer star2, Integer star3, Integer star4, Integer star5) {
+		if(star1 == null)
+			star1 = 0;
+		if(star2 == null)
+			star2 = 0;
+		if(star3 == null)
+			star3 = 0;
+		if(star4 == null)
+			star4 = 0;
+		if(star5 == null)
+			star5 = 0;
 		int total = star1+star2+star3+star4+star5;
 		if(total != 0)
 			this.star = (star1 + 2*star2 + 3*star3 + 4*star4 + 5*star5) / (star1+star2+star3+star4+star5);
