@@ -13,9 +13,13 @@
 			<c:forEach items="${bookRecommendList}" var="item" varStatus="status" begin="${i*2 }" end="${i*2+1 }">
 			<div class="book_recommend_item span3">
 				<div class="row">
-					<img class="book_recommend_item_image span1" alt="" src="${item.imageSrc }">
+					<a href="/bookInfo?id=${item.id}">
+						<img class="book_recommend_item_image span1" alt="" src="${item.imageSrc }">
+					</a>
 					<dl class="span2">
-						<dt class="book_recommend_item_title">${item.title }</dt>
+						<dt class="book_recommend_item_title">
+							<a href="/bookInfo?id=${item.id}">${item.title }</a>
+						</dt>
 						<dd class="book_recommend_item_author">${item.author }</dd>
 						<dd class="book_recommend_item_star_${item.star }"></dd>
 					</dl>
@@ -38,7 +42,9 @@
 				<h5 class="book_recommend_classify_item_name">${item.tagName}</h5>
 				<ul>
 				<c:forEach items="${item.titleList }" var="title" varStatus="s">
-				<li class="book_recommend_classify_item_title1">${title }</li>
+				<li class="book_recommend_classify_item_title1">
+					<a href="/bookInfo?id=${title.id}">${title.title }</a>
+				</li>
 				</c:forEach>
 				</ul>
 			</div>
@@ -158,8 +164,14 @@
 		<div class="row-fluid">
 		<c:forEach items="${bookRankList}" var="item" varStatus="status" begin="${i*2 }" end="${i*2+1 }">
 		<div class="book_rank_item span6">
-			<div class="text-center"><img class="book_rank_item_image" alt="" src="${item.imageSrc }"></div>
-			<div class="book_rank_item_name text-center">${item.title}</div>
+			<div class="text-center">
+				<a href="/bookInfo?id=${item.id }">
+					<img class="book_rank_item_image" alt="" src="${item.imageSrc }">
+				</a>
+			</div>
+			<div class="book_rank_item_name text-center">
+				<a href="/bookInfo?id=${item.id }">${item.title}</a>
+			</div>
 		</div>
 		</c:forEach>
 		</div>

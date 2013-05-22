@@ -18,28 +18,29 @@
 		<%@ include file="resultList.jsp"%>
 	</div>
 	<div class="page text-center">
+		<c:if test="${pagination.totalCount != 0 }">
 		<%@ include file="includes/pagination.jsp" %>
+		</c:if>
 	</div>
 </div>
 
 <div id="content_right" class="span3 offset1">
-	<div id="search_history_title">
-	</div>
-	<div id="search_history_list">
-		<c:forEach items="${searchHistoryList }" var="item" varStatus="status">
-		<div class="search_history_item">
-			<div class="search_history_item_keyword">
-			</div>
-			<div class="search_history_item_result_list">
-				<c:forEach items="${item.resultList}" var="result" varStatus="resultStatus">
-				<div class="book_recommend_item">
-					<img class="book_recommend_item_image" alt="" src="${item.imageSrc }">
-					<div class="book_recommend_item_title">${item.title }</div>
-					<div class="book_recommend_item_author">${item.author }</div>
-					<div class="book_recommend_item_star_${item.star }"></div>
-				</div>
-				</c:forEach>
-			</div>
+	<h4 class="book_recommend_title">
+		图书排行
+	</h4>
+	<div class="book_recommend">
+		<c:forEach items="${bookRankList}" var="item" varStatus="status">
+		<div class="row book_recommend_row">
+			<a class="span1" href="/bookInfo?id=${item.id }">
+				<img class="book_recommend_item_image" alt="" src="${item.imageSrc }">
+			</a>
+			<dl class="span2">
+				<dt class="book_recommend_item_title">
+					<a class="span1" href="/bookInfo?id=${item.id }">${item.title }</a>
+				</dt>
+				<dd class="book_recommend_item_author">${item.author }</dd>
+				<dd class="book_recommend_item_star_${item.star }"></dd>
+			</dl>
 		</div>
 		</c:forEach>
 	</div>
