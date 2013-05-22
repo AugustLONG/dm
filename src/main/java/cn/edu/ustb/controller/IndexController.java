@@ -102,6 +102,7 @@ public class IndexController {
 						break;
 					logger.info("bookInfo with image i = " + i);
 					BookListItemModel item = new BookListItemModel();
+					item.setId(bookInfo.getBOOK_ID());
 					item.setImageSrc(getProperties().getProperty("book_mpic") + bookInfo.getTITLE_PAGE_IMAGES());
 					item.setTitle(bookInfo.getTITLE());
 					BookPublishingInfoExample publishingExample = new BookPublishingInfoExample();
@@ -132,7 +133,7 @@ public class IndexController {
 				relationExample.or().andTAG_IDEqualTo(tagInfo.getTAG_ID());
 				List<BookTagRelation> relationList =
 						getBookTagRelationMapper().selectByExample(relationExample);
-				List<String> titleList = new ArrayList<String>(2);
+				List<BookClassifyItemModel.TitleList> titleList = new ArrayList<BookClassifyItemModel.TitleList>(2);
 				int j = 0;
 				for(BookTagRelation relation : relationList) {
 					BookInfoExample bookExample = new BookInfoExample();
@@ -149,7 +150,10 @@ public class IndexController {
 							if(j == 1)
 								item.setImageSrc(getProperties().getProperty("book_mpic")
 										+ bookInfo.getTITLE_PAGE_IMAGES());
-							titleList.add(bookInfo.getTITLE());
+							BookClassifyItemModel.TitleList title = item.createTitleList();
+							title.setId(bookInfo.getBOOK_ID());
+							title.setTitle(bookInfo.getTITLE());
+							titleList.add(title);
 						}
 					}
 				}
@@ -174,6 +178,7 @@ public class IndexController {
 					else
 						break;
 					BookListItemModel item = new BookListItemModel();
+					item.setId(bookInfo.getBOOK_ID());
 					item.setImageSrc(getProperties().getProperty("book_mpic")
 							+ bookInfo.getTITLE_PAGE_IMAGES());
 					item.setTitle(bookInfo.getTITLE());

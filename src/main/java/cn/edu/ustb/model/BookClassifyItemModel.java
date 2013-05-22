@@ -5,7 +5,7 @@ import java.util.List;
 public class BookClassifyItemModel {
 	private String imageSrc;
 	private String tagName;
-	private List<String> titleList;
+	private List<TitleList> titleList;
 	
 	public String getImageSrc() {
 		return imageSrc;
@@ -13,7 +13,7 @@ public class BookClassifyItemModel {
 	public String getTagName() {
 		return tagName;
 	}
-	public List<String> getTitleList() {
+	public List<TitleList> getTitleList() {
 		return titleList;
 	}
 	public void setImageSrc(String imageSrc) {
@@ -22,8 +22,28 @@ public class BookClassifyItemModel {
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
 	}
-	public void setTitleList(List<String> titleList) {
+	public void setTitleList(List<TitleList> titleList) {
 		this.titleList = titleList;
 	}
+	public TitleList createTitleList() {
+		return new TitleList();
+	}
 	
+	public class TitleList {
+		private Integer id;
+		private String title;
+		
+		public void setId(Integer id) {
+			this.id = id;
+		}
+		public Integer getId() {
+			return id;
+		}
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		public String getTitle() {
+			return title;
+		}
+	}
 }

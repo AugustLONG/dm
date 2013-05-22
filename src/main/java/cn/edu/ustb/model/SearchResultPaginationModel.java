@@ -34,7 +34,10 @@ public class SearchResultPaginationModel {
 	}
 	public Integer getPageCount() {
 		if(count != 0) {
-			return totalCount/count + 1;
+			if(totalCount%count != 0)
+				return totalCount/count + 1;
+			else
+				return totalCount/count;
 		} else
 			return 0;
 	}
@@ -90,7 +93,7 @@ public class SearchResultPaginationModel {
 		return false;
 	}
 	public boolean getIsLast() {
-		if(getCurrentPage() == getPageCount()) {
+		if(getCurrentPage().equals(getPageCount())) {
 			return true;
 		}
 		return false;

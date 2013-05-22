@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BookListItemModel {
+	private Integer id;
 	private String imageSrc;
 	private String title;
 	private String author;
@@ -13,6 +14,9 @@ public class BookListItemModel {
 	private String price;
 	private int star;
 	
+	public Integer getId() {
+		return id;
+	}
 	public String getImageSrc() {
 		return imageSrc;
 	}
@@ -33,6 +37,9 @@ public class BookListItemModel {
 	}
 	public int getStar() {
 		return star;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	public void setImageSrc(String imageSrc) {
 		this.imageSrc = imageSrc;

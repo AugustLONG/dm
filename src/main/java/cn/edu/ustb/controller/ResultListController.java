@@ -61,6 +61,7 @@ public class ResultListController {
 	private List<BookListItemModel> titleResultList;
 	private List<BookListItemModel> authorResultList;
 	private List<BookListItemModel> publisherResultList;
+	private List<BookListItemModel> bookRankList;
 	private Integer titleResultListCount;
 	private Integer authorResultListCount;
 	private Integer publisherResultListCount;
@@ -144,6 +145,7 @@ public class ResultListController {
 		resultList = new ArrayList<BookListItemModel>(bookInfoList.size());
 		for(BookInfo bookInfo : bookInfoList) {
 			BookListItemModel item = new BookListItemModel();
+			item.setId(bookInfo.getBOOK_ID());
 			BookPublishingInfoExample publishingExample = new BookPublishingInfoExample();
 			publishingExample.or().andBook_idEqualTo(bookInfo.getBOOK_ID());
 			List<BookPublishingInfoWithBLOBs> publishingInfoList =
@@ -266,6 +268,40 @@ public class ResultListController {
 		return publisherResultListCount;
 	}
 	
+	private List<BookListItemModel> getBookRankList() {
+		if(bookRankList == null) {
+			bookRankList = new ArrayList<BookListItemModel>(20);
+			BookInfoExample example = new BookInfoExample();
+			example.setOrderByClause("NUMBER_REVIEW DESC limit 40");
+			example.or().andTITLE_PAGE_IMAGESIsNotNull();
+			List<BookInfo> bookList = getBookInfoMapper().selectByExample(example);
+			int i = 0;
+			for(BookInfo bookInfo : bookList) {
+				if(bookInfo.getTITLE_PAGE_IMAGES().trim().length() != 0) {
+					if(i<20)
+						i++;
+					else
+						break;
+					BookListItemModel item = new BookListItemModel();
+					item.setId(bookInfo.getBOOK_ID());
+					item.setImageSrc(getProperties().getProperty("book_mpic")
+							+ bookInfo.getTITLE_PAGE_IMAGES());
+					item.setTitle(bookInfo.getTITLE());
+					BookPublishingInfoExample publishingExample = new BookPublishingInfoExample();
+					publishingExample.or().andBook_idEqualTo(bookInfo.getBOOK_ID());
+					List<BookPublishingInfoWithBLOBs> bookPublishingList =
+							getPublishingInfoMapper().selectByExampleWithBLOBs(publishingExample);
+					item.setAuthor(bookPublishingList.get(0).getAuther_name());
+					item.setStar(bookInfo.getNUMBER_STAR1(), bookInfo.getNUMBER_STAR2(),
+							bookInfo.getNUMBER_STAR3(), bookInfo.getNUMBER_STAR4(),
+							bookInfo.getNUMBER_STAR5());
+					bookRankList.add(item);
+				}
+			}
+		}
+		return bookRankList;
+	}
+	
 	private void resetMapper() {
 		bookInfoMapper = null;
 		tagInfoMapper = null;
@@ -302,6 +338,7 @@ public class ResultListController {
 			}
 			model.addAttribute("pagination", pagination);
 			model.addAttribute("searchType", "titleResultList");
+			model.addAttribute("bookRankList", getBookRankList());
 			session.commit();
 		} finally {
 			session.close();
@@ -339,6 +376,7 @@ public class ResultListController {
 			}
 			model.addAttribute("pagination", pagination);
 			model.addAttribute("searchType", "authorResultList");
+			model.addAttribute("bookRankList", getBookRankList());
 			session.commit();
 		} finally {
 			session.close();
@@ -375,6 +413,7 @@ public class ResultListController {
 			}
 			model.addAttribute("pagination", pagination);
 			model.addAttribute("searchType", "publisherResultList");
+			model.addAttribute("bookRankList", getBookRankList());
 			session.commit();
 		} finally {
 			session.close();
