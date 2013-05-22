@@ -2,11 +2,27 @@
     pageEncoding="UTF-8"%>
 <%@ include file="includes/header.jsp"%>
 
-<div id="content_left">
-	<%@ include file="resultList.jsp"%>
+<div class="row">
+<div id="content_left" class="span6 offset1">
+	<div id="statics">
+		<c:if test="${pagination.totalCount == 0 }">
+		<div class="alert">
+			没有找到任何与"${pagination.keyword }"相关的图书
+		</div>
+		</c:if>
+		<c:if test="${pagination.totalCount != 0 }">
+			显示： <span>${pagination.from+1 }</span>-<span>${pagination.from+pagination.listCount }</span>条， 共<span>${pagination.totalCount }</span>条
+		</c:if>
+	</div>
+	<div id="result_list">
+		<%@ include file="resultList.jsp"%>
+	</div>
+	<div class="page text-center">
+		<%@ include file="includes/pagination.jsp" %>
+	</div>
 </div>
 
-<div id="content_right">
+<div id="content_right" class="span3 offset1">
 	<div id="search_history_title">
 	</div>
 	<div id="search_history_list">
@@ -28,5 +44,5 @@
 		</c:forEach>
 	</div>
 </div>
-
+</div>
 <%@ include file="includes/footer.jsp"%>

@@ -11,7 +11,8 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/main.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -22,7 +23,7 @@
       	width:689px;
       }
     </style>
-    <link href="resources/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/resources/css/bootstrap-responsive.min.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -39,29 +40,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="#">图书推荐系统</a>
+          <a class="brand" href="/">图书推荐系统</a>
           <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li class="divider"></li>
-                  <li class="nav-header">Nav header</li>
-                  <li><a href="#">Separated link</a></li>
-                  <li><a href="#">One more separated link</a></li>
-                </ul>
-              </li>
-            </ul>
             <form class="navbar-form pull-right">
               <input class="span2" type="text" placeholder="Email">
               <input class="span2" type="password" placeholder="Password">
-              <input class="checkbox" type="checkbox"> Remember me
+              <input class="checkbox" type="checkbox">Remember me
               <button type="submit" class="btn">登录</button>
               <button type="button" class="btn">注册</button>
             </form>
@@ -71,19 +55,32 @@
     </div>
     <div class="container">
       <div id="search-area">
+      	<input type="hidden" id="search_type_value" value=
+      		<c:if test="${searchType==null }">"titleResultList"</c:if>
+      		<c:if test="${searchType!=null }">"${searchType }"</c:if>>
+      	<input type="hidden" id="search_count" value=
+      		<c:if test="${pagination.count==null }">"20"</c:if>
+      		<c:if test="${pagination.count!=null }">"${pagination.count }"</c:if>>
         <div class="input-append input-prepend">
           <div class="btn-group">
-            <button class="btn dropdown-toggle" data-toggle="dropdown">全部分类 <span class="caret"></span></button>
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+            	<span id="search_type">
+            	<c:choose>
+            		<c:when test="${searchType == 'authorResultList' }">作者</c:when>
+            		<c:when test="${searchType == 'publisherResultList' }">出版社</c:when>
+            		<c:otherwise>标题</c:otherwise>
+            	</c:choose>
+            	</span>
+            	<span class="caret"></span>
+            </button>
             <ul class="dropdown-menu">
-              <li><a href="#">Action</a></li>
-              <li><a href="#">Another action</a></li>
-              <li><a href="#">Something else here</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Separated link</a></li>
+              <li><a id="search_type1" href="#">标题</a></li>
+              <li><a id="search_type2" href="#">作者</a></li>
+              <li><a id="search_type3" href="#">出版社</a></li>
             </ul>
           </div>
-          <input class="input-xxlarge" id="appendedInputButton appendedPrependedDropdownButton" type="text">
-          <button class="btn" type="button">搜索</button>
+          <input class="input-xxlarge search_keyword" id="appendedInputButton appendedPrependedDropdownButton" type="text" value="${pagination.keyword }">
+          <button id="search_button" class="btn" type="button">搜索</button>
         </div>
       </div>
     </div>

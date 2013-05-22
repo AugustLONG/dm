@@ -6,7 +6,8 @@
         <p>&copy; USTB 2013</p>
       </footer>
     </div> <!-- /container -->
-    <script src="resources/js/jquery.min.js"></script>
-    <script src="resources/js/bootstrap.min.js"></script>
+    <script src="/resources/js/jquery.min.js"></script>
+    <script src="/resources/js/bootstrap.min.js"></script>
+    <script src="/resources/js/main.js"></script>
   </body>
 </html>
