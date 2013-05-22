@@ -2,6 +2,8 @@ package cn.edu.ustb.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +39,7 @@ import cn.edu.ustb.dm.model.BookPublishingInfoWithBLOBs;
 import cn.edu.ustb.dm.model.PublisherInfo;
 import cn.edu.ustb.dm.model.PublisherInfoExample;
 import cn.edu.ustb.model.BookListItemModel;
+import cn.edu.ustb.model.SearchResultPaginationModel;
 
 @Controller
 public class ResultListController {
@@ -151,9 +154,12 @@ public class ResultListController {
 			}
 			if(bookInfo.getPUBLICATION_DATE() != null)
 				item.setDate(bookInfo.getPUBLICATION_DATE());
-			if(bookInfo.getTITLE_PAGE_IMAGES() != null)
+			if(bookInfo.getTITLE_PAGE_IMAGES() != null &&
+					bookInfo.getTITLE_PAGE_IMAGES().trim().length() != 0)
 				item.setImageSrc(getProperties().getProperty("book_mpic")
 						+ bookInfo.getTITLE_PAGE_IMAGES());
+			else
+				item.setImageSrc("/resources/img/default_book.jpg");
 			item.setPrice(bookInfo.getLIST_PRICE());
 			item.setStar(bookInfo.getNUMBER_STAR1(), bookInfo.getNUMBER_STAR2(),
 					bookInfo.getNUMBER_STAR3(), bookInfo.getNUMBER_STAR4(),
@@ -276,14 +282,26 @@ public class ResultListController {
 			@RequestParam("from") int from,
 			@RequestParam("count") int count,
 			@RequestParam("type") int type) {
+		try {
+			keyword = new String(keyword.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		SearchResultPaginationModel pagination = new SearchResultPaginationModel();
+		pagination.setKeyword(keyword);
+		pagination.setFrom(from);
+		pagination.setCount(count);
 		session = sqlSessionFactory.openSession();
 		resetMapper();
 		try {
-			int listCount = getTitleResultListCount(keyword);
-			if(listCount > 0)
-				model.addAttribute("resultList", getTitleResultList(keyword, from, count));
-			model.addAttribute("totalCount", listCount);
-			model.addAttribute("from", from+count);
+			pagination.setTotalCount(getTitleResultListCount(keyword));
+			if(pagination.getTotalCount() > 0) {
+				List<BookListItemModel> titleList = getTitleResultList(keyword, from, count);
+				pagination.setListCount(titleList.size());
+				model.addAttribute("resultList", titleList);
+			}
+			model.addAttribute("pagination", pagination);
+			model.addAttribute("searchType", "titleResultList");
 			session.commit();
 		} finally {
 			session.close();
@@ -300,16 +318,27 @@ public class ResultListController {
 			@RequestParam("from") int from,
 			@RequestParam("count") int count,
 			@RequestParam("type") int type) {
+		try {
+			keyword = new String(keyword.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		SearchResultPaginationModel pagination = new SearchResultPaginationModel();
+		pagination.setKeyword(keyword);
+		pagination.setFrom(from);
+		pagination.setCount(count);
 		session = sqlSessionFactory.openSession();
 		resetMapper();
 		logger.info("authorRelativeList");
 		try {
-			int listCount = getAuthorResultListCount(keyword);
-			logger.info("listCount = " + listCount);
-			if(listCount > 0)
-				model.addAttribute("resultList", getAuthorResultList(keyword, from, count));
-			model.addAttribute("totalCount", listCount);
-			model.addAttribute("from", from+count);
+			pagination.setTotalCount(getAuthorResultListCount(keyword));
+			if(pagination.getTotalCount() > 0) {
+				List<BookListItemModel> authorList = getAuthorResultList(keyword, from, count);
+				pagination.setListCount(authorList.size());
+				model.addAttribute("resultList", authorList);
+			}
+			model.addAttribute("pagination", pagination);
+			model.addAttribute("searchType", "authorResultList");
 			session.commit();
 		} finally {
 			session.close();
@@ -326,14 +355,26 @@ public class ResultListController {
 			@RequestParam("from") int from,
 			@RequestParam("count") int count,
 			@RequestParam("type") int type) {
+		try {
+			keyword = new String(keyword.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		SearchResultPaginationModel pagination = new SearchResultPaginationModel();
+		pagination.setKeyword(keyword);
+		pagination.setFrom(from);
+		pagination.setCount(count);
 		session = sqlSessionFactory.openSession();
 		resetMapper();
 		try {
-			int listCount = getPublisherResultListCount(keyword);
-			if(listCount > 0)
-				model.addAttribute("resultList", getPublisherResultList(keyword, from, count));
-			model.addAttribute("totalCount", listCount);
-			model.addAttribute("from", from+count);
+			pagination.setTotalCount(getPublisherResultListCount(keyword));
+			if(pagination.getTotalCount() > 0) {
+				List<BookListItemModel> publisherList = getPublisherResultList(keyword, from, count);
+				pagination.setListCount(publisherList.size());
+				model.addAttribute("resultList", publisherList);
+			}
+			model.addAttribute("pagination", pagination);
+			model.addAttribute("searchType", "publisherResultList");
 			session.commit();
 		} finally {
 			session.close();

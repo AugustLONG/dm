@@ -161,15 +161,15 @@ public class IndexController {
 	}
 	private List<BookListItemModel> getBookRankList() {
 		if(bookRankList == null) {
-			bookRankList = new ArrayList<BookListItemModel>(6);
+			bookRankList = new ArrayList<BookListItemModel>(16);
 			BookInfoExample example = new BookInfoExample();
-			example.setOrderByClause("NUMBER_REVIEW DESC limit 30");
+			example.setOrderByClause("NUMBER_REVIEW DESC limit 40");
 			example.or().andTITLE_PAGE_IMAGESIsNotNull();
 			List<BookInfo> bookList = getBookInfoMapper().selectByExample(example);
 			int i = 0;
 			for(BookInfo bookInfo : bookList) {
 				if(bookInfo.getTITLE_PAGE_IMAGES().trim().length() != 0) {
-					if(i<6)
+					if(i<16)
 						i++;
 					else
 						break;
