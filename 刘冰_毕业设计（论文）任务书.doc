@@ -1,0 +1,32 @@
+
+
+
+
+
+
+<html>
+
+<body>
+       
+
+
+<p align="center"><font size="4"><b>毕 业 设 计（论 文）任 务 书</b><br>
+ _____________________________________________________________<br>
+ </font> </p>
+ <p style="line-height: 150%;">
+一、学生姓名：刘冰&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;学号：40950187<br>
+二、题目:基于Web的图书推荐系统展示平台<br>
+三、题目来源：真实&nbsp;&nbsp;<input type="checkbox" name="txt_TMLY"   value="0" style="width:400;height=400"
+>、&nbsp;&nbsp;&nbsp;&nbsp;自拟&nbsp;&nbsp;<input type="checkbox" name="txt_TMLY" checked  value="1" style="width:400;height=400"><br>           	
+四、结业方式：设计&nbsp;&nbsp;<input type="checkbox" name="txt_JYFS" checked  value="0" style="width:400;height=400">、&nbsp;&nbsp;&nbsp;&nbsp;论文&nbsp;&nbsp;<input type="checkbox" name="txt_JYFS"  value="1" style="width:400;height=400" ><br>
+五、主要内容：<br>采用BS结构，对图书推荐系统的内容进行查询、处理与展示。在服务器端采用Spring&nbsp;MVC框架与对象持久化技术对图书信息进行查询与处理，在客户端使用浏览器对数据进行展示与交互，最终达到图书推荐系统通过WEB平台展示的目的。<br>
+六、主要（技术）要求：<br>1.Java程序设计语言，MySQL关系数据库，Eclipse&nbsp;Java&nbsp;EE开发平台。<br>2.Spring&nbsp;MVC框架与面向对象数据映射框架。<br>3.Maven项目管理工具与Git版本控制工具。<br><br>
+七、日程安排：<br>第1周：&nbsp;&nbsp;&nbsp;&nbsp;确定毕业设计题目的任务。<br>第2-5周：&nbsp;&nbsp;明确设计目标和要求，查阅资料，完成选题报告与页面设计。<br>第6-11周：&nbsp;进行项目配置与开发、部署，完成中期报告。<br>第12-16周：功能测试，BUG修复，工作总结，撰写论文，准备答辩。<br><br>
+八、主要参考文献和书目：<br>[1] Joshua Bloch. Effective Java中文版 [M]. 杨春华，俞黎敏译. 第2版. 北京: 机械工业出版社, 2009<br>[2] SpringSource公司, Bram Smeets, Seth Ladd. Spring 2企业应用开发 [M]. 翟育明, 杨春华等译. 北京: 人民邮电出版社, 2008<br>[3] 靳建林. 基于SSH和jQuery框架的网络购物平台的设计与实现 [D]. 安徽: 安徽理工大学, 2012<br>[4] 宋成明. 基于Spring、iBATIS与Structs的轻量级Java EE编程研究 [D]. 上海: 上海师范大学, 2007<br>[5] Tom Burton-West. Practical Relevance Ranking for 10 Million Books [J]. University of Michigan Library, 2012<br><br> 
+<p align="right">指导教师签字：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日
+<p align="right">学 生 签 字：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日
+<p align="right">系（所）负责人章：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日
+</body>
+</html>
+	
+
