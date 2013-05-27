@@ -1,0 +1,40 @@
+@CHARSET "UTF-8";
+.book_line {
+	padding: 15px 0 15px 0;
+	border-bottom-width: 1px;
+	border-bottom-color: #eaeaea;
+	border-bottom-style: solid;
+}
+
+.book_recommend_classify {
+	margin-top: 20px;
+}
+
+.tag_list_item {
+	border-bottom-width: 1px;
+	border-bottom-color: #eaeaea;
+	border-bottom-style: solid;
+	margin: 10px 0 0 0;
+}
+
+.book_rank {
+	margin-top: 20px;
+}
+
+#statics {
+	margin: 20px 0 20px 0;
+}
+
+.result_item {
+	border-top: 1px dashed #ddd;
+	padding: 20px 0 10px 0;
+}
+
+#content_right {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.book_recommend_row {
+	margin-top: 10px;
+}
